@@ -1,5 +1,14 @@
 import "@testing-library/jest-dom";
 
+// Mock global fetch for components that call APIs in useEffect
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    json: async () => ({}),
+  })
+) as unknown as typeof fetch;
+
+
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: (query: string) => ({
@@ -13,3 +22,43 @@ Object.defineProperty(window, "matchMedia", {
     dispatchEvent: jest.fn(),
   }),
 });
+
+// Fully typed and compatible IntersectionObserver mock for Jest + TypeScript
+class MockIntersectionObserver implements IntersectionObserver {
+  readonly root: Element | Document | null = null;
+  readonly rootMargin: string = "";
+  readonly thresholds: ReadonlyArray<number> = [];
+
+  constructor(
+    _callback: IntersectionObserverCallback,
+    _options?: IntersectionObserverInit
+  ) {
+    // no-op
+  }
+
+  observe(_target: Element) {
+    // no-op
+  }
+
+  unobserve(_target: Element) {
+    // no-op
+  }
+
+  disconnect() {
+    // no-op
+  }
+
+  takeRecords(): IntersectionObserverEntry[] {
+    return [];
+  }
+}
+
+(global as any).IntersectionObserver = MockIntersectionObserver;
+
+// Prevent JSDOM from trying to actually navigate
+// delete (window as any).location;
+// (window as any).location = {
+//   assign: jest.fn(),
+//   replace: jest.fn(),
+//   href: "",
+// };
