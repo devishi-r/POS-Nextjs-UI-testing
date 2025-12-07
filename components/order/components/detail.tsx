@@ -180,6 +180,7 @@ export default function Detail({
           <div className="ml-auto flex items-center gap-1 print:hidden">
             {/* Button for printing receipt */}
             <Button
+              data-testid="print-btn"
               size="icon"
               variant="outline"
               className="h-8 gap-1"

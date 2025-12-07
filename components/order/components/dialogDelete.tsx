@@ -83,6 +83,7 @@ export function AlertDialogDeletetransaction({
           {/* Render the AlertDialogFooter */}
           <AlertDialogCancel onClick={handleCancel}>Cancel</AlertDialogCancel>
           <AlertDialogAction
+            data-testid="confirm-delete-btn"
             onClick={handleDelete} // Call handleDelete function when clicked
             disabled={loading} // Disable the button when loading
             className="text-gray-100"

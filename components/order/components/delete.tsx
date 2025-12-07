@@ -86,6 +86,7 @@ export function AlertDialogDelete({ data }: DialogDeleteProps) {
         <AlertDialogFooter>
           <AlertDialogCancel onClick={handleCancel}>Cancel</AlertDialogCancel>
           <AlertDialogAction
+            data-testid = "confirm-delete-btn"
             onClick={handleDelete}
             disabled={loading}
             className="text-gray-100"

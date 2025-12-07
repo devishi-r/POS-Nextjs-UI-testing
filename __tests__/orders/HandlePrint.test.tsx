@@ -12,6 +12,7 @@ jest.mock("axios", () => ({
 }));
 
 import axios from "axios";
+import { TransactionData } from "@/types/transaction";
 
 describe("Detail Component - Print", () => {
   test("calls handlePrint on print button click", async () => {
@@ -21,13 +22,21 @@ describe("Detail Component - Print", () => {
 
     (axios.patch as jest.Mock).mockResolvedValue({ status: 200, data: {} });
 
-    const fakeData = [
+    const fakeData: TransactionData = [
       {
-        quantity: 1,
+        id: "t1",
+        transactionId: "123",
         productId: "1",
-        product: { sellprice: 10, productstock: { name: "item" } },
+        quantity: 1,
+        product: {
+          sellprice: 10,
+          productstock: {
+            name: "item",
+          },
+        },
       },
     ];
+
 
     const mockSetTransactionId = jest.fn();
 
