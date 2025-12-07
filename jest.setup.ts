@@ -55,10 +55,12 @@ class MockIntersectionObserver implements IntersectionObserver {
 
 (global as any).IntersectionObserver = MockIntersectionObserver;
 
-// Prevent JSDOM from trying to actually navigate
-// delete (window as any).location;
-// (window as any).location = {
-//   assign: jest.fn(),
-//   replace: jest.fn(),
-//   href: "",
-// };
+jest.mock("next/navigation", () => ({
+  useRouter() {
+    return {
+      push: jest.fn(),
+      replace: jest.fn(),
+      prefetch: jest.fn(),
+    };
+  },
+}));

@@ -47,6 +47,7 @@ const FullscreenButton: React.FC<FullscreenButtonProps> = ({ targetRef }) => {
   return (
     <>
       <Button
+        data-testid="fullscreen-btn"
         onClick={handleFullscreen}
         className="absolute top-2 right-2 p-2"
         variant="outline"
