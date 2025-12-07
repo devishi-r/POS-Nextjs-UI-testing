@@ -1,17 +1,11 @@
-/** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
-  preset: "ts-jest",
   testEnvironment: "jsdom",
-
-  // THIS IS THE IMPORTANT PART — tell ts-jest to handle TSX
   transform: {
-    "^.+\\.(ts|tsx)$": ["ts-jest", { tsconfig: "tsconfig.json" }],
+    "^.+\\.(ts|tsx|js|jsx)$": "babel-jest",
   },
-
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
+    "\\.(css|less|scss)$": "identity-obj-proxy",
   },
-
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
-  testMatch: ["**/__tests__/**/*.(test|spec).(ts|tsx)"],
 };
