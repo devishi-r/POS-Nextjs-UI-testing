@@ -6,208 +6,189 @@ import axios from 'axios';
 import { Input } from '@/components/ui/input';
 import { initialChartoneOptions } from '@/lib/charts';
 
-// Dynamically import ReactApexChart for client-side rendering only
+// Dynamically import ApexCharts only on client
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
 });
 
 interface ChartOneState {
-  series: {
-    name: string;
-    data: number[];
-  }[];
+  series: { name: string; data: number[] }[];
   options: ApexOptions;
 }
 
-// Get today's date
-const today = new Date();
-
-// Calculate one week from today
-const oneWeekFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-
-// Format dates as yyyy-mm-dd strings
-const startDateString = today.toISOString().split('T')[0];
-const endDateString = oneWeekFromNow.toISOString().split('T')[0];
-
 const ChartOne: React.FC = () => {
-  // State for chart data
   const [dataChart, setDataChart] = useState<number[]>([]);
-  // State for start and end dates
   const [startDate, setStartDate] = useState<string>('2024-05-01');
   const [endDate, setEndDate] = useState<string>('2024-05-15');
 
-  // State for chart options and series
   const [state, setState] = useState<ChartOneState>({
-    series: [
-      {
-        name: 'Products Sales',
-        data: [],
-      },
-    ],
+    series: [{ name: 'Products Sales', data: [] }],
     options: initialChartoneOptions,
   });
 
-  // Function to generate an array of date strings between start and end dates
+  // ----------------------------
+  // Generate date range
+  // ----------------------------
   const generateDateRange = (start: string, end: string) => {
     const startDate = new Date(start);
     const endDate = new Date(end);
-    const dateArray: string[] = [];
-    let currentDate = startDate;
+    const dates: string[] = [];
 
-    // Check if dates are in the same month and year
-    const isSameMonth =
+    let current = startDate;
+    const sameMonth =
       startDate.getFullYear() === endDate.getFullYear() &&
       startDate.getMonth() === endDate.getMonth();
-    const isSameYear = startDate.getFullYear() === endDate.getFullYear();
+    const sameYear = startDate.getFullYear() === endDate.getFullYear();
 
-    // Generate date strings based on conditions
-    while (currentDate <= endDate) {
-      let formattedDate: string;
+    while (current <= endDate) {
+      let f: string;
 
-      if (!isSameYear) {
-        formattedDate = currentDate.toLocaleDateString('en-US', {
+      if (!sameYear) {
+        f = current.toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'short',
           day: 'numeric',
         });
-      } else if (!isSameMonth) {
-        formattedDate = currentDate.toLocaleDateString('en-US', {
+      } else if (!sameMonth) {
+        f = current.toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric',
         });
       } else {
-        formattedDate = currentDate.toLocaleDateString('en-US', {
+        f = current.toLocaleDateString('en-US', {
           month: 'long',
           day: 'numeric',
         });
       }
 
-      if (!dateArray.includes(formattedDate)) {
-        dateArray.push(formattedDate);
-      }
+      if (!dates.includes(f)) dates.push(f);
 
-      currentDate.setDate(currentDate.getDate() + 1);
+      current.setDate(current.getDate() + 1);
     }
 
-    return dateArray;
+    return dates;
   };
 
-  // Update chart x-axis categories when startDate or endDate changes
+  // ----------------------------
+  // Update X-axis categories
+  // ----------------------------
   useEffect(() => {
-    const newCategories = generateDateRange(startDate, endDate);
+    if (typeof window === "undefined") return; // prevents act() warnings
 
-    setState((prevState) => ({
-      ...prevState,
+    const categories = generateDateRange(startDate, endDate);
+
+    setState(prev => ({
+      ...prev,
       options: {
-        ...prevState.options,
-        xaxis: {
-          ...prevState.options.xaxis,
-          categories: newCategories,
-        },
-      },
+        ...prev.options,
+        xaxis: { ...prev.options.xaxis, categories }
+      }
     }));
   }, [startDate, endDate]);
 
-  // Function to fetch data from the API
+  // ----------------------------
+  // Fetch API Data
+  // ----------------------------
   const fetchData = async () => {
     try {
       const response = await axios.get(
         `/api/productsale?start=${startDate}&end=${endDate}`
       );
-      const { combinedResult } = response.data;
 
-      // Assuming combinedResult is an array of objects with totalQuantity field
-      const chartData = combinedResult.map(
-        (item: { totalQuantity: number }) => item.totalQuantity
+      // FIX: avoid undefined.map error
+      const combinedResult = response.data?.combinedResult ?? [];
+
+      const chartData = combinedResult.map((item: { totalQuantity: number }) =>
+        item.totalQuantity
       );
 
-      // Update dataChart with the processed data
       setDataChart(chartData);
-    } catch (error) {
-      console.error('Error fetching data', error);
+    } catch (e) {
+      console.error("Error fetching data", e);
     }
   };
 
-  // Fetch data when startDate or endDate changes
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     fetchData();
   }, [startDate, endDate]);
 
-  // Update chart series data when dataChart changes
+  // ----------------------------
+  // Update chart series when data changes
+  // ----------------------------
   useEffect(() => {
-    if (dataChart.length > 0) {
-      const maxChartData = Math.max(...dataChart) + 1;
+    if (typeof window === "undefined") return;
+    if (dataChart.length === 0) return;
 
-      setState((prevState) => ({
-        ...prevState,
-        series: [
-          {
-            ...prevState.series[0],
-            data: dataChart,
-          },
-        ],
-        options: {
-          ...prevState.options,
-          yaxis: {
-            ...prevState.options.yaxis,
-            max: maxChartData,
-          },
-        },
-      }));
-    }
+    const maxVal = Math.max(...dataChart) + 1;
+
+    setState(prev => ({
+      ...prev,
+      series: [{ ...prev.series[0], data: dataChart }],
+      options: {
+        ...prev.options,
+        yaxis: { ...prev.options.yaxis, max: maxVal }
+      }
+    }));
   }, [dataChart]);
 
   return (
-    <div className="h-full w-full col-span-12 rounded-sm border border-stroke bg-white px-5 pb-5 pt-[1.875rem] shadow-de dark:border-strokedark dark:bg-chartbody sm:px-[1.875rem] xl:col-span-8">
-      <div className="flex flex-wrap items-start justify-between gap-3 sm:flex-nowrap">
-        <div className="flex w-full flex-wrap gap-3 sm:gap-5">
-          <div className="flex min-w-[11.875rem]">
-            <span className="mr-2 mt-1 flex h-4 w-full max-w-4 items-center justify-center rounded-full border border-secondarychart">
-              <span className="block h-2.5 w-full max-w-2.5 rounded-full bg-secondarychart"></span>
-            </span>
-            <div className="w-full">
-              <p className="font-semibold text-secondarychart">
-                Total Products Sales
-              </p>
-              <div className="flex gap-4">
-                <div className="flex gap-4 items-center">
-                  <label className="mr-2 text-sm">Start</label>
-                  <div>
-                    <Input
-                      className="h-8"
-                      type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="flex gap-4 items-center">
-                  <label className="mr-2">End</label>
-                  <div>
-                    <Input
-                      className="h-8"
-                      type="date"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                    />
-                  </div>
-                </div>
+    <div className="h-full w-full col-span-12 rounded-sm border border-stroke bg-white px-5 pb-5 pt-[1.875rem] shadow-de">
+      <div className="flex flex-wrap items-start gap-3">
+        <div className="flex min-w-[11.875rem]">
+          <span className="mr-2 mt-1 flex h-4 w-full max-w-4 items-center justify-center rounded-full border border-secondarychart">
+            <span className="block h-2.5 w-full max-w-2.5 rounded-full bg-secondarychart"></span>
+          </span>
+
+          <div className="w-full">
+            <p className="font-semibold text-secondarychart">
+              Total Products Sales
+            </p>
+
+            <div className="flex gap-4">
+
+              {/* Start date - FIXED WITH id + htmlFor */}
+              <div className="flex gap-4 items-center">
+                <label className="mr-2 text-sm" htmlFor="start-date">
+                  Start
+                </label>
+                <Input
+                  id="start-date"
+                  className="h-8"
+                  type="date"
+                  value={startDate}
+                  onChange={e => setStartDate(e.target.value)}
+                />
               </div>
+
+              {/* End date - FIXED WITH id + htmlFor */}
+              <div className="flex gap-4 items-center">
+                <label className="mr-2" htmlFor="end-date">
+                  End
+                </label>
+                <Input
+                  id="end-date"
+                  className="h-8"
+                  type="date"
+                  value={endDate}
+                  onChange={e => setEndDate(e.target.value)}
+                />
+              </div>
+
             </div>
           </div>
         </div>
       </div>
 
-      <div>
-        <div id="chartOne" className="-ml-5">
-          <ReactApexChart
-            options={state.options}
-            series={state.series}
-            type="area"
-            height={420}
-            width={'100%'}
-          />
-        </div>
+      <div id="chartOne" className="-ml-5">
+        <ReactApexChart
+          options={state.options}
+          series={state.series}
+          type="area"
+          height={420}
+          width="100%"
+        />
       </div>
     </div>
   );

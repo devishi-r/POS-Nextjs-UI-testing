@@ -6,6 +6,8 @@ module.exports = {
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
     "\\.(css|less|scss)$": "identity-obj-proxy",
+    "^react-apexcharts$": "<rootDir>/__mocks__/react-apexcharts.js"
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+  testPathIgnorePatterns: ["<rootDir>/e2e/"],
 };

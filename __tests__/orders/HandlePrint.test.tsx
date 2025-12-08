@@ -22,7 +22,7 @@ describe("Detail Component - Print", () => {
 
     (axios.patch as jest.Mock).mockResolvedValue({ status: 200, data: {} });
 
-    const fakeData: TransactionData = [
+    const fakeData: TransactionData[] = [
       {
         id: "t1",
         transactionId: "123",
@@ -32,10 +32,12 @@ describe("Detail Component - Print", () => {
           sellprice: 10,
           productstock: {
             name: "item",
-          },
-        },
-      },
+            cat: ""
+          }
+        }
+      }
     ];
+
 
 
     const mockSetTransactionId = jest.fn();
