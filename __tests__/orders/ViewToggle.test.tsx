@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Orders } from "@/components/order/demo";
 
-describe("Orders Page – View Toggle & Format Display", () => {
+describe("Orders Page - View Toggle & Format Display", () => {
 
   test("renders table view with table headers initially", () => {
     render(<Orders />);
@@ -18,7 +18,7 @@ describe("Orders Page – View Toggle & Format Display", () => {
 
     const toggleButton = screen.getByTestId("view-toggle-btn");
 
-    // Switch table → bill view
+    //switch view from table to bill
     fireEvent.click(toggleButton);
 
     expect(screen.getByText(/subtotal/i)).toBeInTheDocument();

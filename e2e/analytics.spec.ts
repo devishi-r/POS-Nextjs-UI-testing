@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Workflow E — Analytics UI Automation', () => {
+test.describe('Analytics UI Automation', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/home');
     await expect(page.locator('nav.grid')).toBeVisible();
@@ -59,6 +59,7 @@ test.describe('Workflow E — Analytics UI Automation', () => {
     await expect(dateInputs.first()).toBeVisible();
     await expect(dateInputs.last()).toBeVisible();
 
-    await expect(page.locator('#chartOne .apexcharts-canvas')).toBeVisible();
+    await expect(page.locator('#chartOne .apexcharts-canvas')).toBeVisible(); //using a css selector to check apexcharts is mounted and chart container is rendered
+    //charts render structural css based dom
   });
 });

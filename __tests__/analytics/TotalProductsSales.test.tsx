@@ -18,8 +18,11 @@ describe("Analytics - Total Products Sales", () => {
       render(<SalesPage />);
     });
 
-    const start = screen.getByLabelText(/start/i);
-    const end = screen.getByLabelText(/end/i);
+    const start = screen.getByLabelText(/start/i); //getLabelByText() returns form control associated with argument label text
+    const end = screen.getByLabelText(/end/i); //presence of input elements (date filters) is confirmed
+
+    expect(start).toHaveAttribute("type", "date");
+    expect(end).toHaveAttribute("type", "date");
 
     expect(start).toBeInTheDocument();
     expect(end).toBeInTheDocument();
@@ -30,6 +33,6 @@ describe("Analytics - Total Products Sales", () => {
       render(<SalesPage />);
     });
 
-    expect(screen.getByTestId("apexchart-mock")).toBeInTheDocument();
+    expect(screen.getByTestId("apexchart-mock")).toBeInTheDocument(); //expects dynamic render of chart to be triggered
   });
 });

@@ -4,7 +4,7 @@ import IncomePage from "@/app/(root)/analytics/income/page";
 // Required mocks
 jest.mock("axios");
 jest.mock("next/dynamic", () => () => (props: any) => (
-  <img data-testid="apexchart-mock" alt="chart" {...props} />
+  <img data-testid="apexchart-mock" alt="chart" {...props} /> //since jsdom cant render real canvas elements like apexcharts - fallback: rendering a simple image holder
 ));
 
 describe("Analytics - Income Chart", () => {
