@@ -1,7 +1,7 @@
 // tests/navigation.spec.ts
 import { test, expect } from '@playwright/test';
 
-test.describe('Global Navigation – Workflow A', () => {
+test.describe('Global Navigation', () => {
 
   test('Landing page CTA navigates to Home Dashboard', async ({ page }) => {
     await page.goto('/');
@@ -35,17 +35,14 @@ test.describe('Global Navigation – Workflow A', () => {
         const link = links.nth(i);
         const href = await link.getAttribute('href');
 
-        // click
         await link.click();
 
-        // check URL changed correctly
         await expect(page).toHaveURL(href!, { timeout: 5000 });
 
-        // ensure something meaningful rendered
+        //ensure something meaningful rendered
         const contentLoaded = await page.locator('main, h1, h2, h3, div').count();
         expect(contentLoaded).toBeGreaterThan(0);
 
-        // go back home before next iteration
         await page.goto('/home');
       }
     });

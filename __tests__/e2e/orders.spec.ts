@@ -1,9 +1,9 @@
 // tests/orders.spec.ts
 import { test, expect } from '@playwright/test';
 
-test.describe('Workflow D — Orders UI Automation (Frontend Only)', () => {
+test.describe('Orders UI Automation (Frontend Only)', () => {
 
-  // D1 — Load Orders Page
+  //load Orders Page
   test('Orders page loads with core UI elements', async ({ page }) => {
     await page.goto('/orders');
 
@@ -15,7 +15,7 @@ test.describe('Workflow D — Orders UI Automation (Frontend Only)', () => {
     await expect(page.getByTestId('delete-product-btn')).toBeVisible();
   });
 
-  // D2 — Add Product Modal - imitating workend of UI shell with no backend functionality
+  // Add Product Modal - imitating workend of UI shell with no backend functionality
   // hence, only verifying if spinner button temporarily displays - it is the purely only UI response that can be tested
   test('Add Product button shows spinner and does not open modal (no backend)', async ({ page }) => {
     await page.goto('/orders');
@@ -32,7 +32,7 @@ test.describe('Workflow D — Orders UI Automation (Frontend Only)', () => {
     });
 
 
-  // D3 — Delete Transaction button UI state
+  //Delete Transaction button UI state
   test('Delete Transaction button is disabled when no transaction exists', async ({ page }) => {
     await page.goto('/orders');
 
@@ -42,7 +42,7 @@ test.describe('Workflow D — Orders UI Automation (Frontend Only)', () => {
     await expect(deleteBtn).toBeDisabled();
   });
 
-  // D4 — Toggle Table ↔ Bill View
+  //table and bill view toggle
   test('Table/Bill view toggles correctly', async ({ page }) => {
     await page.goto('/orders');
 
@@ -63,7 +63,7 @@ test.describe('Workflow D — Orders UI Automation (Frontend Only)', () => {
     await expect(page.getByRole('columnheader', { name: 'Product' })).toBeVisible();
   });
 
-  // D5 — Print Button UI state
+  //print Button UI state
   test('Print button remains disabled with no data', async ({ page }) => {
     await page.goto('/orders');
 
@@ -76,7 +76,7 @@ test.describe('Workflow D — Orders UI Automation (Frontend Only)', () => {
     await expect(printBtn).toBeDisabled();
   });
 
-  // D6 — Fullscreen Toggle
+  //fullscreen Toggle
   test('Fullscreen button toggles fullscreen mode', async ({ page }) => {
     await page.goto('/orders');
 
@@ -85,7 +85,7 @@ test.describe('Workflow D — Orders UI Automation (Frontend Only)', () => {
     await expect(fullscreenBtn).toBeVisible();
 
     await fullscreenBtn.click();
-    await page.waitForTimeout(500); // Allow browser to apply fullscreen
+    await page.waitForTimeout(500); //allow browser to apply fullscreen
 
     await page.evaluate(() => {
       if (!document.fullscreenElement) {

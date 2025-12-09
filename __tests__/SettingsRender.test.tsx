@@ -8,25 +8,21 @@ describe("Settings Page", () => {
   test("renders Store Name and Tax Rate inputs", () => {
     render(<SettingsPage />);
 
-    //
     // STORE NAME CARD
-    //
     const storeHeading = screen.getByRole("heading", { name: /store name/i });
 
-    // Cast to HTMLElement for TypeScript
-    const storeCard = storeHeading.closest(".rounded-xl") as HTMLElement | null;
+    //locating parent "card" element
+    const storeCard = storeHeading.closest(".rounded-xl") as HTMLElement | null; // Cast to HTMLElement for TypeScript because we can not guarantee what .closest() returns
     expect(storeCard).not.toBeNull();
 
-    const storeInput =
+    const storeInput = //testing input fields within located card element
       within(storeCard!).queryByRole("textbox") ||
       within(storeCard!).queryByRole("spinbutton");
 
     expect(storeInput).not.toBeNull();
 
 
-    //
     // TAX RATE CARD
-    //
     const taxHeading = screen.getByRole("heading", { name: /tax rate/i });
 
     const taxCard = taxHeading.closest(".rounded-xl") as HTMLElement | null;

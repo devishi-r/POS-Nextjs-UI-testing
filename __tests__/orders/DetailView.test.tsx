@@ -74,15 +74,14 @@ describe("Detail Component (Bill/Receipt View)", () => {
 
     // axios.patch was called
     const axios = require("axios");
-    expect(axios.patch).toHaveBeenCalled();
+    expect(axios.patch).toHaveBeenCalled(); //beacuse print operation usually updates something server side
 
-    // print was triggered
     expect(mockPrintFn).toHaveBeenCalled();
 
-    // transaction ID cleared afterwards
-    expect(mockSetTransactionId).toHaveBeenCalledWith(null);
+    expect(mockSetTransactionId).toHaveBeenCalledWith(null); //verifying ui resets after printing
 
-    // event emitted
+    // mimicking original implementation - 'event emitted'
+    // ensures after printing component sends correct signal to reset ui :)
     const eventBus = require("@/lib/even");
     expect(eventBus.emit).toHaveBeenCalledWith("clearTransactionData");
   });

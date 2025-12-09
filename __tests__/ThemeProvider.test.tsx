@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { ThemeProvider } from "@/components/theme-provider";
 
+// ensruing ui doesn't crash on using themeprovider
 describe("ThemeProvider", () => {
   test("renders children inside the provider", () => {
     render(
@@ -9,6 +10,6 @@ describe("ThemeProvider", () => {
       </ThemeProvider>
     );
 
-    expect(screen.getByTestId("child")).toBeInTheDocument();
+    expect(screen.getByTestId("child")).toBeInTheDocument(); 
   });
 });

@@ -19,7 +19,7 @@ jest.mock("next/link", () => {
   );
 });
 
-// Mocking usePathname to always return "/"
+// Mocking usePathname hook to always return "/" : original implementation: current route is highlighted; jest - no next router - dummy path "/" for consistent pathname
 jest.mock("next/navigation", () => ({
   usePathname: () => "/",
 }));
@@ -43,12 +43,11 @@ describe("Sidebar Navigation", () => {
 
       expect(link).toBeInTheDocument();
 
-      // Simulate clicking the sidebar link
       await user.click(link);
 
       // Expectation: clicking updates the URL correctly.
       // JSDOM cannot change URL, but we can assert the <a href> is correct.
-      expect(link).toHaveAttribute("href", item.path);
+      expect(link).toHaveAttribute("href", item.path); //checks if link has attibute href with value item.path
     }
   });
 });

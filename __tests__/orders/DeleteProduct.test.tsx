@@ -72,7 +72,7 @@ describe("AlertDialogDelete", () => {
     });
   });
 
-  test("emits fetchTransactionData event after delete", async () => {
+  test("emits fetchTransactionData event after delete", async () => { //after deletion - refreshed transaction list (requeried from api/onsale...) and re-rendered table
     mockedAxiosDelete.mockResolvedValue({ status: 200 });
 
     render(<AlertDialogDelete data={mockData} />);

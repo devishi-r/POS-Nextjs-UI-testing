@@ -3,12 +3,13 @@ import DetailPage from "@/app/(root)/records/[id]/page";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
+//replacing axios module and nextjs' router with a mock
 jest.mock("axios");
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
 }));
 
-// Ensure axios.isAxiosError always returns true
+// Ensure axios.isAxiosError always returns true 
 (axios.isAxiosError as any) = () => true;
 
 beforeAll(() => {

@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import HomePage from "@/app/(root)/home/page";
 
 beforeAll(() => {
-  global.fetch = jest.fn(() =>
+  global.fetch = jest.fn(() => //mocked weather API fetch
     Promise.resolve({
       json: () =>
         Promise.resolve({
