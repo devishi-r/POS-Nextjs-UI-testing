@@ -26,7 +26,7 @@ describe("DetailPage (Record Details)", () => {
   });
 
   test("renders transaction items and calculates totals", async () => {
-    (axios.get as jest.Mock) //<DetailPage /> makes two axios GET calls - one for tax details and one for transaction details
+    (axios.get as jest.Mock)
       .mockResolvedValueOnce({
         status: 200,
         data: { data: { tax: 10 } },
