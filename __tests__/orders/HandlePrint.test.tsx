@@ -38,8 +38,6 @@ describe("Detail Component - Print", () => {
       }
     ];
 
-
-
     const mockSetTransactionId = jest.fn();
 
     await act(async () => {

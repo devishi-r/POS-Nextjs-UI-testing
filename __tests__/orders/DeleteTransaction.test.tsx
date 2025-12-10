@@ -16,7 +16,7 @@ describe("AlertDialogDeletetransaction", () => {
       writable: true,
     });
 
-    // Mock localStorage
+    //component deletes something from local storage - inspecting if removeItem is called
     Storage.prototype.removeItem = jest.fn();
   });
 
@@ -59,20 +59,20 @@ describe("AlertDialogDeletetransaction", () => {
     });
   });
 
-  test("Delete success clears transactionId & localStorage", async () => {
-    (axios.delete as jest.Mock).mockResolvedValue({ status: 200 });
+    test("Delete success clears transactionId & localStorage", async () => {
+      (axios.delete as jest.Mock).mockResolvedValue({ status: 200 });
 
-    render(<AlertDialogDeletetransaction {...mockProps} />);
+      render(<AlertDialogDeletetransaction {...mockProps} />);
 
-    const buttons = screen.getAllByRole("button");
-    const deleteBtn = buttons[buttons.length - 1];
-    fireEvent.click(deleteBtn);
-    // fireEvent.click(screen.getByText(/delete/i));
+      const buttons = screen.getAllByRole("button");
+      const deleteBtn = buttons[buttons.length - 1];
+      fireEvent.click(deleteBtn);
+      // fireEvent.click(screen.getByText(/delete/i));
 
-    await waitFor(() => {
-      expect(mockProps.setTransactionId).toHaveBeenCalledWith(null);
-      expect(localStorage.removeItem).toHaveBeenCalledWith("transactionId");
-      expect(mockProps.onClose).toHaveBeenCalled();
+      await waitFor(() => {
+        expect(mockProps.setTransactionId).toHaveBeenCalledWith(null);
+        expect(localStorage.removeItem).toHaveBeenCalledWith("transactionId");
+        expect(mockProps.onClose).toHaveBeenCalled();
+      });
     });
-  });
 });
