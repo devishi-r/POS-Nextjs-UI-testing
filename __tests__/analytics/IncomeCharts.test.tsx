@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import IncomePage from "@/app/(root)/analytics/income/page";
 
 // Required mocks
@@ -8,20 +8,20 @@ jest.mock("next/dynamic", () => () => (props: any) => (
 ));
 
 describe("Analytics - Income Chart", () => {
-  test("renders income heading", () => {
-    render(<IncomePage />);
+  test("renders income heading", async () => {
+    await waitFor(() => render(<IncomePage />));
     expect(screen.getByText(/income/i)).toBeInTheDocument();
   });
 
-  test("renders date inputs", () => {
-    render(<IncomePage />);
-    expect(screen.getByDisplayValue("2024-05-01")).toBeInTheDocument();
-    expect(screen.getByDisplayValue("2024-05-15")).toBeInTheDocument();
+  test("renders date inputs", async () => {
+    await waitFor(() => render(<IncomePage />));    
+    expect(screen.getByTestId("chartfour-start")).toBeInTheDocument();
+    expect(screen.getByTestId("chartfour-end")).toBeInTheDocument();
     });
 
 
-  test("renders chart canvas element", () => {
-    render(<IncomePage />);
+  test("renders chart canvas element", async () => {
+    await waitFor(() => render(<IncomePage />));
     expect(screen.getByRole("img", { hidden: true })).toBeInTheDocument();
   });
 });

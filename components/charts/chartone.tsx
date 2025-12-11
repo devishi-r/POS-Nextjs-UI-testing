@@ -20,6 +20,7 @@ const ChartOne: React.FC = () => {
   const [dataChart, setDataChart] = useState<number[]>([]);
   const [startDate, setStartDate] = useState<string>('2024-05-01');
   const [endDate, setEndDate] = useState<string>('2024-05-15');
+  const [dateError, setDateError] = useState<string | null>(null);
 
   const [state, setState] = useState<ChartOneState>({
     series: [{ name: 'Products Sales', data: [] }],
@@ -150,30 +151,60 @@ const ChartOne: React.FC = () => {
 
               {/* Start date - FIXED WITH id + htmlFor */}
               <div className="flex gap-4 items-center">
-                <label className="mr-2 text-sm" htmlFor="start-date">
+                <label className="mr-2 text-sm" htmlFor="chartone-start">
                   Start
                 </label>
                 <Input
-                  id="start-date"
+                  id = "chartone-start"
+                  data-testid = "chartone-start"
                   className="h-8"
                   type="date"
                   value={startDate}
-                  onChange={e => setStartDate(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setStartDate(value);
+
+                    if (new Date(value) > new Date(endDate)) {
+                      setDateError("Start date cannot be after end date");
+                    } else {
+                      setDateError(null);
+                    }
+                  }}
                 />
+                {dateError && (
+                  <p data-testid="date-error" className="text-red-600 text-sm">
+                    {dateError}
+                  </p>
+                )}
               </div>
 
               {/* End date - FIXED WITH id + htmlFor */}
               <div className="flex gap-4 items-center">
-                <label className="mr-2" htmlFor="end-date">
+                <label className="mr-2" htmlFor="chartone-end">
                   End
                 </label>
                 <Input
-                  id="end-date"
+                  id = "chartone-end"
+                  data-testid = "chartone-end"
                   className="h-8"
                   type="date"
-                  value={endDate}
-                  onChange={e => setEndDate(e.target.value)}
+                  value={startDate}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setStartDate(value);
+
+                    if (new Date(value) > new Date(endDate)) {
+                      setDateError("Start date cannot be after end date");
+                    } else {
+                      setDateError(null);
+                    }
+                  }}
                 />
+                {dateError && (
+                  <p data-testid="date-error" className="text-red-600 text-sm">
+                    {dateError}
+                  </p>
+                )}
               </div>
 
             </div>

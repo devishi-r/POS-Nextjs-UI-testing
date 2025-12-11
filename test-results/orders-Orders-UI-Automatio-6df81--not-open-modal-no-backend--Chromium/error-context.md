@@ -1,0 +1,76 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - generic [ref=e6]:
+      - link "Inc" [ref=e8] [cursor=pointer]:
+        - /url: /
+        - img [ref=e9]
+        - generic [ref=e11]: Inc
+      - navigation [ref=e13]:
+        - link "Home" [ref=e14] [cursor=pointer]:
+          - /url: /home
+          - img [ref=e15]
+          - text: Home
+        - link "Orders" [ref=e18] [cursor=pointer]:
+          - /url: /orders
+          - img [ref=e19]
+          - text: Orders
+        - link "Product" [ref=e23] [cursor=pointer]:
+          - /url: /product
+          - img [ref=e24]
+          - text: Product
+        - link "Records" [ref=e28] [cursor=pointer]:
+          - /url: /records
+          - img [ref=e29]
+          - text: Records
+        - link "Settings" [ref=e32] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e33]
+          - text: Settings
+        - link "Technologies" [ref=e36] [cursor=pointer]:
+          - /url: /technologies
+          - img [ref=e37]
+          - text: Technologies
+        - button "Show Charts Menu" [ref=e40] [cursor=pointer]:
+          - img [ref=e41]
+          - text: Show Charts Menu
+    - generic [ref=e44]:
+      - banner [ref=e45]:
+        - navigation "breadcrumb" [ref=e47]:
+          - list [ref=e48]:
+            - listitem [ref=e49]:
+              - link "Orders" [disabled] [ref=e50]
+        - button "Toggle theme" [ref=e51] [cursor=pointer]:
+          - img [ref=e52]
+          - img
+          - generic [ref=e54]: Toggle theme
+      - main [ref=e55]:
+        - generic [ref=e59]:
+          - generic [ref=e61]:
+            - heading "Orders" [level=3] [ref=e62]
+            - paragraph
+            - button [ref=e63] [cursor=pointer]:
+              - img [ref=e64]
+            - generic [ref=e69]:
+              - button [ref=e71] [cursor=pointer]:
+                - img [ref=e72]
+              - generic [ref=e74]:
+                - button [disabled]:
+                  - img
+              - generic [ref=e75]:
+                - button [disabled]:
+                  - img
+          - table [ref=e78]:
+            - rowgroup [ref=e79]:
+              - row "Product Type Price Qty Amount" [ref=e80]:
+                - columnheader "Product" [ref=e81]
+                - columnheader "Type" [ref=e82]
+                - columnheader "Price" [ref=e83]
+                - columnheader "Qty" [ref=e84]
+                - columnheader "Amount" [ref=e85]
+                - columnheader [ref=e86]
+            - rowgroup
+  - alert [ref=e87]
+```

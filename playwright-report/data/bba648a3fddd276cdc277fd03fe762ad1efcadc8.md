@@ -1,0 +1,140 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e4]:
+      - generic [ref=e6]:
+        - link "Inc" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - img [ref=e9]
+          - generic [ref=e11]: Inc
+        - navigation [ref=e13]:
+          - link "Home" [ref=e14] [cursor=pointer]:
+            - /url: /home
+            - img [ref=e15]
+            - text: Home
+          - link "Orders" [active] [ref=e18] [cursor=pointer]:
+            - /url: /orders
+            - img [ref=e19]
+            - text: Orders
+          - link "Product" [ref=e23] [cursor=pointer]:
+            - /url: /product
+            - img [ref=e24]
+            - text: Product
+          - link "Records" [ref=e28] [cursor=pointer]:
+            - /url: /records
+            - img [ref=e29]
+            - text: Records
+          - link "Settings" [ref=e32] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e33]
+            - text: Settings
+          - link "Technologies" [ref=e36] [cursor=pointer]:
+            - /url: /technologies
+            - img [ref=e37]
+            - text: Technologies
+          - button "Show Charts Menu" [ref=e40] [cursor=pointer]:
+            - img [ref=e41]
+            - text: Show Charts Menu
+      - generic [ref=e44]:
+        - banner [ref=e45]:
+          - navigation "breadcrumb" [ref=e47]:
+            - list [ref=e48]:
+              - listitem [ref=e49]:
+                - link "Home" [disabled] [ref=e50]
+          - button "Toggle theme" [ref=e51] [cursor=pointer]:
+            - img [ref=e52]
+            - img
+            - generic [ref=e54]: Toggle theme
+        - main [ref=e55]:
+          - generic [ref=e58]:
+            - generic [ref=e59]:
+              - generic [ref=e62]: 11:25:56
+              - generic [ref=e63]:
+                - img [ref=e64]
+                - generic [ref=e67]: Don't Forget To Rest Your Soul
+                - generic [ref=e68]: Experience the power of time.
+            - generic [ref=e69]:
+              - generic [ref=e71]:
+                - generic [ref=e72]: Jakarta
+                - generic [ref=e73]: scattered clouds
+                - generic [ref=e74]:
+                  - img "Weather Icon" [ref=e76]
+                  - generic [ref=e77]: 32°C
+                - generic [ref=e78]:
+                  - generic [ref=e79]:
+                    - strong [ref=e80]: "Min:"
+                    - text: 31°C
+                  - generic [ref=e81]:
+                    - strong [ref=e82]: "Max:"
+                    - text: 33°C
+              - generic [ref=e83]:
+                - img [ref=e84]
+                - generic [ref=e86]: Human Can't Predict A Future
+                - generic [ref=e87]: Don't forget bring you'r umberella.
+            - generic [ref=e88]:
+              - generic [ref=e90]: Wednesday, December-2025
+              - generic [ref=e91]:
+                - img [ref=e92]
+                - generic [ref=e94]: Tomorrow is Tomorrow not Today
+                - generic [ref=e95]: Every Day is Amazing
+            - generic [ref=e96]:
+              - generic [ref=e97]:
+                - generic [ref=e98]:
+                  - img [ref=e99]
+                  - paragraph [ref=e112]: Total Product
+                  - paragraph [ref=e113]: Loading...
+                - generic [ref=e114]:
+                  - img [ref=e115]
+                  - paragraph [ref=e118]: Income
+                  - paragraph [ref=e120]: $Loading...
+                - generic [ref=e121]:
+                  - img [ref=e122]
+                  - paragraph [ref=e128]: Total Product Sale
+                  - paragraph [ref=e129]: Loading...
+              - generic [ref=e130]:
+                - img [ref=e131]
+                - generic [ref=e137]: Analysis
+                - generic [ref=e138]: Understand the sale analysis.
+            - generic [ref=e139]:
+              - generic [ref=e141]:
+                - img [ref=e142]
+                - generic [ref=e146]:
+                  - paragraph [ref=e147]: "Effective Type: 4g"
+                  - paragraph [ref=e148]: "Downlink: 9.2 Mbps"
+              - generic [ref=e149]:
+                - img [ref=e150]
+                - generic [ref=e154]: Network Speed
+                - generic [ref=e155]: Summarize your Network Speed.
+    - generic [ref=e156]:
+      - generic [ref=e157]:
+        - alert [ref=e158]:
+          - img [ref=e160]
+          - generic [ref=e162]: "Failed to fetch data: Failed to fetch shop data. Please try again later."
+        - button "close" [ref=e163] [cursor=pointer]:
+          - img [ref=e164]
+        - progressbar "notification timer" [ref=e168]
+      - generic [ref=e169]:
+        - alert [ref=e170]:
+          - img [ref=e172]
+          - generic [ref=e174]: "Error: Request failed with status code 500"
+        - button "close" [ref=e175] [cursor=pointer]:
+          - img [ref=e176]
+        - progressbar "notification timer" [ref=e180]
+      - generic [ref=e181]:
+        - alert [ref=e182]:
+          - img [ref=e184]
+          - generic [ref=e186]: "Error: Request failed with status code 500"
+        - button "close" [ref=e187] [cursor=pointer]:
+          - img [ref=e188]
+        - progressbar "notification timer" [ref=e192]
+      - generic [ref=e193]:
+        - alert [ref=e194]:
+          - img [ref=e196]
+          - generic [ref=e198]: "Failed to fetch data: Failed to fetch shop data. Please try again later."
+        - button "close" [ref=e199] [cursor=pointer]:
+          - img [ref=e200]
+        - progressbar "notification timer" [ref=e204]
+  - alert [ref=e205]
+```

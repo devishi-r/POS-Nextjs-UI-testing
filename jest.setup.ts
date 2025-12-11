@@ -64,3 +64,30 @@ jest.mock("next/navigation", () => ({
     };
   },
 }));
+
+// Mock react-apexcharts to a simple component that renders an <img> or <div>
+jest.mock("react-apexcharts", () => {
+  const React = require("react");  // ← inside mock factory
+  return function MockApexChart() {
+    return React.createElement("img", {
+      alt: "chart",
+      "data-testid": "apexchart-mock",
+    });
+  };
+});
+
+jest.mock("next/link", () => {
+  const React = require("react"); // ← inside mock factory
+  return ({ children, href }: any) => {
+    return React.createElement("a", { href }, children);
+  };
+});
+
+jest.mock("axios", () => ({
+  get: jest.fn().mockResolvedValue({
+    data: { groupedData: [] },
+  }),
+}));
+
+
+
