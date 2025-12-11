@@ -5,7 +5,7 @@ import "@testing-library/jest-dom";
 describe("CouponSection – Validation & Business Logic", () => {
   const setup = (subtotal = 1000, onApplyDiscount = jest.fn()) => {
     render(
-      <CouponSection subtotal={subtotal} onApplyDiscount={onApplyDiscount} />
+      <CouponSection subtotal={subtotal} onApplyCoupon={onApplyDiscount} />
     );
     return { onApplyDiscount };
   };

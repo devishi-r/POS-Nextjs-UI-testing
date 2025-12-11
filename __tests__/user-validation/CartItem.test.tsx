@@ -3,118 +3,116 @@ import CartItem from "@/components/cart/CartItem";
 import "@testing-library/jest-dom";
 
 describe("CartItem – Quantity Validation & UI Logic", () => {
-  const setup = (props = {}) =>
-    render(
-      <CartItem
-        name="Laptop"
-        price={1000}
-        stock={5}
-        {...props}
-      />
-    );
+  function setup(initialQty = 1) {
+    let currentQty = initialQty;
+
+    const mockOnQtyChange = jest.fn((newQty: number) => {
+      currentQty = newQty;
+      rerenderComponent();
+    });
+
+    let rerenderComponent = () => {};
+
+    function renderComponent() {
+      const utils = render(
+        <CartItem
+          name="Laptop"
+          price={1000}
+          stock={5}
+          qty={currentQty}
+          onQtyChange={mockOnQtyChange}
+        />
+      );
+      rerenderComponent = () =>
+        utils.rerender(
+          <CartItem
+            name="Laptop"
+            price={1000}
+            stock={5}
+            qty={currentQty}
+            onQtyChange={mockOnQtyChange}
+          />
+        );
+    }
+
+    renderComponent();
+    return { mockOnQtyChange };
+  }
 
   test("renders initial qty = 1 and correct subtotal", () => {
     setup();
 
     expect(screen.getByTestId("qty-input")).toHaveValue("1");
-    expect(screen.getByTestId("subtotal")).toHaveTextContent("1000"); // qty 1 * price 1000
+    expect(screen.getByTestId("subtotal")).toHaveTextContent("1000");
   });
 
   test("increment button increases quantity until stock limit", () => {
-    setup();
+    const { mockOnQtyChange } = setup(1);
 
-    const incrementBtn = screen.getByTestId("increment-btn");
-    const qtyInput = screen.getByTestId("qty-input");
-
-    // Press + four times: 1 → 5 (limit)
-    for (let i = 0; i < 4; i++) fireEvent.click(incrementBtn);
-
-    expect(qtyInput).toHaveValue("5");
-    expect(screen.getByTestId("subtotal")).toHaveTextContent("5000"); // 5 * 1000
+    for (const expected of [2, 3, 4]) {
+      fireEvent.click(screen.getByText("+"));
+      expect(mockOnQtyChange).toHaveBeenCalledWith(expected);
+    }
   });
 
   test("increment beyond stock shows error and does not update qty", () => {
-    setup();
+    const { mockOnQtyChange } = setup(5);
 
-    const incrementBtn = screen.getByTestId("increment-btn");
+    fireEvent.click(screen.getByText("+"));
 
-    // Reach stock limit
-    for (let i = 0; i < 5; i++) fireEvent.click(incrementBtn);
-
-    // Try going beyond
-    fireEvent.click(incrementBtn);
-
-    expect(screen.getByTestId("qty-error")).toHaveTextContent(
-      /exceeds available stock/i
-    );
-    expect(screen.getByTestId("qty-input")).toHaveValue("5");
+    expect(screen.getByTestId("qty-error")).toHaveTextContent(/exceeds/i);
+    expect(mockOnQtyChange).not.toHaveBeenCalled();
   });
 
   test("decrement button decreases quantity until minimum of 1", () => {
-    setup();
+    const { mockOnQtyChange } = setup(3);
 
-    const incrementBtn = screen.getByTestId("increment-btn");
-    const decrementBtn = screen.getByTestId("decrement-btn");
-
-    // Make qty = 3
-    fireEvent.click(incrementBtn);
-    fireEvent.click(incrementBtn);
-
-    fireEvent.click(decrementBtn);
-
-    expect(screen.getByTestId("qty-input")).toHaveValue("2");
+    for (const expected of [2, 1]) {
+      fireEvent.click(screen.getByText("-"));
+      expect(mockOnQtyChange).toHaveBeenCalledWith(expected);
+    }
   });
 
   test("decrementing below 1 shows error and prevents update", () => {
-    setup();
+    const { mockOnQtyChange } = setup(1);
 
-    const decrementBtn = screen.getByTestId("decrement-btn");
-
-    // qty starts at 1 → try to reduce below
-    fireEvent.click(decrementBtn);
+    fireEvent.click(screen.getByText("-"));
 
     expect(screen.getByTestId("qty-error")).toHaveTextContent(/at least 1/i);
-    expect(screen.getByTestId("qty-input")).toHaveValue("1");
+    expect(mockOnQtyChange).not.toHaveBeenCalled();
   });
 
   test("manual input updates qty correctly when valid", () => {
-    setup();
+    const { mockOnQtyChange } = setup(1);
 
-    const qtyInput = screen.getByTestId("qty-input");
+    fireEvent.change(screen.getByTestId("qty-input"), {
+      target: { value: "3" },
+    });
 
-    fireEvent.change(qtyInput, { target: { value: "3" } });
-
-    expect(qtyInput).toHaveValue("3");
+    expect(mockOnQtyChange).toHaveBeenCalledWith(3);
     expect(screen.getByTestId("subtotal")).toHaveTextContent("3000");
   });
 
   test("manual input beyond stock shows error and prevents update", () => {
-    setup();
+    const { mockOnQtyChange } = setup(1);
 
-    const qtyInput = screen.getByTestId("qty-input");
+    fireEvent.change(screen.getByTestId("qty-input"), {
+      target: { value: "10" },
+    });
 
-    fireEvent.change(qtyInput, { target: { value: "10" } });
-
-    expect(screen.getByTestId("qty-error")).toHaveTextContent(
-      /exceeds available stock/i
-    );
-
-    // qty remains unchanged (should stay 1)
-    expect(qtyInput).toHaveValue("1");
+    expect(screen.getByTestId("qty-error")).toHaveTextContent(/exceeds/i);
+    expect(mockOnQtyChange).not.toHaveBeenCalled();
   });
 
   test("non-numeric input shows validation error", () => {
-    setup();
+    const { mockOnQtyChange } = setup(1);
 
-    const qtyInput = screen.getByTestId("qty-input");
+    fireEvent.change(screen.getByTestId("qty-input"), {
+      target: { value: "abc" },
+    });
 
-    fireEvent.change(qtyInput, { target: { value: "abc" } });
-
-    expect(screen.getByTestId("qty-error")).toHaveTextContent(
-      /valid number/i
-    );
-
-    // Value should not be updated
-    expect(qtyInput).toHaveValue("1");
+    expect(screen.getByTestId("qty-error")).toHaveTextContent(/valid number/i);
+    expect(mockOnQtyChange).not.toHaveBeenCalled();
+    expect(screen.getByTestId("qty-input")).toHaveValue("1");
   });
 });

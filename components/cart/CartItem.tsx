@@ -1,110 +1,97 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
-interface CartItemProps {
+export interface CartItemProps {
   name: string;
   price: number;
-  stock: number; // available stock
+  stock: number;
+  qty: number; // REQUIRED
+  onQtyChange: (newQty: number) => void;
 }
 
-export default function CartItem({ name, price, stock }: CartItemProps) {
-  const [qty, setQty] = useState(1);
+export default function CartItem({
+  name,
+  price,
+  stock,
+  qty,
+  onQtyChange,
+}: CartItemProps) {
   const [error, setError] = useState<string | null>(null);
 
-  const subtotal = qty * price;
-
-  function validateQuantity(value: number) {
+  function validateQuantity(raw: string): number | null {
     setError(null);
 
-    // 1. Must be a valid number
-    if (isNaN(value)) {
+    if (!/^\d+$/.test(raw)) {
       setError("Quantity must be a valid number");
-      return false;
+      return null;
     }
 
-    // 2. Business constraints
+    const value = Number(raw);
+
     if (value < 1) {
       setError("Quantity must be at least 1");
-      return false;
+      return null;
     }
 
     if (value > stock) {
       setError("Quantity exceeds available stock");
-      return false;
+      return null;
     }
 
-    return true;
+    return value;
   }
 
-
-  function handleManualQtyInput(e: React.ChangeEvent<HTMLInputElement>) {
-    const value = Number(e.target.value);
-    if (validateQuantity(value)) {
-      setQty(value);
-    }
-  }
-
-  function incrementQty() {
-    const newValue = qty + 1;
-    if (validateQuantity(newValue)) {
-      setQty(newValue);
+  function handleManualInput(e: React.ChangeEvent<HTMLInputElement>) {
+    const validated = validateQuantity(e.target.value);
+    if (validated !== null) {
+      onQtyChange(validated);
     }
   }
 
-  function decrementQty() {
-    const newValue = qty - 1;
-    if (validateQuantity(newValue)) {
-      setQty(newValue);
+  function increment() {
+    const newQty = qty + 1;
+    if (newQty <= stock) {
+      onQtyChange(newQty);
+    } else {
+      setError("Quantity exceeds available stock");
+    }
+  }
+
+  function decrement() {
+    const newQty = qty - 1;
+    if (newQty >= 1) {
+      onQtyChange(newQty);
+    } else {
+      setError("Quantity must be at least 1");
     }
   }
 
   return (
-    <div className="border p-4 rounded space-y-2" data-testid="cart-item">
-      <h2 className="font-semibold">{name}</h2>
-
+    <div className="border p-4 rounded space-y-2">
+      <h3 className="font-semibold">{name}</h3>
       <p>Price: ₹{price}</p>
       <p>Available Stock: {stock}</p>
 
-      {/* Quantity Controls */}
       <div className="flex items-center space-x-2">
-        <button
-          type="button"
-          onClick={decrementQty}
-          className="px-3 py-1 bg-gray-200 rounded"
-          data-testid="decrement-btn"
-        >
-          -
-        </button>
+        <button onClick={decrement} className="border px-2 py-1">-</button>
 
         <input
           type="text"
-          value={qty}
-          onChange={handleManualQtyInput}
-          className="border p-1 w-16 text-center"
+          value={qty.toString()}
+          onChange={handleManualInput}
           data-testid="qty-input"
+          className="border p-1 w-16 text-center"
         />
 
-        <button
-          type="button"
-          onClick={incrementQty}
-          className="px-3 py-1 bg-gray-200 rounded"
-          data-testid="increment-btn"
-        >
-          +
-        </button>
+        <button onClick={increment} className="border px-2 py-1">+</button>
       </div>
 
-      {error && (
-        <p className="text-red-500 text-sm" data-testid="qty-error">
-          {error}
-        </p>
-      )}
+      <p data-testid="subtotal">Subtotal: ₹{qty * price}</p>
 
-      {/* Subtotal */}
-      <p data-testid="subtotal" className="font-semibold">
-        Subtotal: ₹{subtotal}
-      </p>
+      {error && (
+        <p data-testid="qty-error" className="text-red-500 text-sm">{error}</p>
+      )}
     </div>
   );
 }
