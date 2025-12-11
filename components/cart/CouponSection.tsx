@@ -2,12 +2,18 @@
 
 import React, { useState } from "react";
 
-const VALID_COUPONS = {
-  SAVE10: { type: "percent", value: 10 },   // 10% off
-  SAVE20: { type: "percent", value: 20 },   // 20% off
-  FLAT50: { type: "flat", value: 50 },      // ₹50 off
-  FLAT100: { type: "flat", value: 100 }     // ₹100 off
+type CouponInfo = {
+  type: "percent" | "flat";
+  value: number;
 };
+
+const VALID_COUPONS: Record<string, CouponInfo> = {
+  SAVE10: { type: "percent", value: 10 },
+  SAVE20: { type: "percent", value: 20 },
+  FLAT50: { type: "flat", value: 50 },
+  FLAT100: { type: "flat", value: 100 },
+};
+
 
 const EXPIRED_COUPONS = ["OLD10", "SUMMER22"];
 
