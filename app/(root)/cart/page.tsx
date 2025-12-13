@@ -34,6 +34,7 @@ export default function CartPage() {
       {cartItems.map((item, index) => (
         <CartItem
           key={index}
+          index = {index}
           name={item.name}
           price={item.price}
           stock={item.stock}

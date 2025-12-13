@@ -1,13 +1,12 @@
-'use client';
-import { ApexOptions } from 'apexcharts';
-import React, { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-import axios from 'axios';
-import { Input } from '@/components/ui/input';
-import { initialChartoneOptions } from '@/lib/charts';
+"use client";
+import { ApexOptions } from "apexcharts";
+import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+import axios from "axios";
+import { Input } from "@/components/ui/input";
+import { initialChartoneOptions } from "@/lib/charts";
 
-// Dynamically import ApexCharts only on client
-const ReactApexChart = dynamic(() => import('react-apexcharts'), {
+const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
@@ -18,209 +17,184 @@ interface ChartOneState {
 
 const ChartOne: React.FC = () => {
   const [dataChart, setDataChart] = useState<number[]>([]);
-  const [startDate, setStartDate] = useState<string>('2024-05-01');
-  const [endDate, setEndDate] = useState<string>('2024-05-15');
+  const [startDate, setStartDate] = useState("2024-05-01");
+  const [endDate, setEndDate] = useState("2024-05-15");
   const [dateError, setDateError] = useState<string | null>(null);
+  const [appliedRange, setAppliedRange] = useState({ start: startDate, end: endDate });
 
   const [state, setState] = useState<ChartOneState>({
-    series: [{ name: 'Products Sales', data: [] }],
+    series: [{ name: "Products Sales", data: [] }],
     options: initialChartoneOptions,
   });
 
   // ----------------------------
-  // Generate date range
+  // Generate date range buckets
   // ----------------------------
   const generateDateRange = (start: string, end: string) => {
-    const startDate = new Date(start);
-    const endDate = new Date(end);
-    const dates: string[] = [];
+    const s = new Date(start);
+    const e = new Date(end);
+    const list: string[] = [];
 
-    let current = startDate;
-    const sameMonth =
-      startDate.getFullYear() === endDate.getFullYear() &&
-      startDate.getMonth() === endDate.getMonth();
-    const sameYear = startDate.getFullYear() === endDate.getFullYear();
-
-    while (current <= endDate) {
-      let f: string;
-
-      if (!sameYear) {
-        f = current.toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-        });
-      } else if (!sameMonth) {
-        f = current.toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-        });
-      } else {
-        f = current.toLocaleDateString('en-US', {
-          month: 'long',
-          day: 'numeric',
-        });
-      }
-
-      if (!dates.includes(f)) dates.push(f);
-
+    let current = new Date(s);
+    while (current <= e) {
+      list.push(
+        current.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        })
+      );
       current.setDate(current.getDate() + 1);
     }
-
-    return dates;
+    return list;
   };
 
-  // ----------------------------
-  // Update X-axis categories
-  // ----------------------------
+  // Update X-axis only when applied range changes
   useEffect(() => {
-    if (typeof window === "undefined") return; // prevents act() warnings
+    const categories = generateDateRange(appliedRange.start, appliedRange.end);
 
-    const categories = generateDateRange(startDate, endDate);
-
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       options: {
         ...prev.options,
-        xaxis: { ...prev.options.xaxis, categories }
-      }
+        xaxis: { ...prev.options.xaxis, categories },
+      },
     }));
-  }, [startDate, endDate]);
+  }, [appliedRange]);
 
   // ----------------------------
-  // Fetch API Data
+  // Validation Helpers
   // ----------------------------
-  const fetchData = async () => {
+  const validateStart = (value: string) => {
+    const today = new Date();
+    if (new Date(value) > today) return "Start date cannot be in the future";
+    if (new Date(value) > new Date(endDate))
+      return "Start date cannot be after end date";
+    return null;
+  };
+
+  const validateEnd = (value: string) => {
+    const today = new Date();
+    if (new Date(value) > today) return "End date cannot be in the future";
+    if (new Date(startDate) > new Date(value))
+      return "End date must be after start date";
+    return null;
+  };
+
+  // ----------------------------
+  // Fetch API ONLY when Apply clicked
+  // ----------------------------
+  const fetchData = async (s: string, e: string) => {
     try {
-      const response = await axios.get(
-        `/api/productsale?start=${startDate}&end=${endDate}`
-      );
-
-      // FIX: avoid undefined.map error
-      const combinedResult = response.data?.combinedResult ?? [];
-
-      const chartData = combinedResult.map((item: { totalQuantity: number }) =>
-        item.totalQuantity
-      );
-
-      setDataChart(chartData);
-    } catch (e) {
-      console.error("Error fetching data", e);
+      const res = await axios.get(`/api/productsale?start=${s}&end=${e}`);
+      const list = res.data?.combinedResult ?? [];
+      const data = list.map((x: any) => x.totalQuantity);
+      setDataChart(data);
+    } catch (err) {
+      console.error("Error fetching", err);
     }
   };
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
+  // ----------------------------
+  // Apply Button Handler
+  // ----------------------------
+  const onApply = () => {
+    const err1 = validateStart(startDate);
+    const err2 = validateEnd(endDate);
 
-    fetchData();
-  }, [startDate, endDate]);
+    if (err1 || err2) {
+      setDateError(err1 || err2);
+      return;
+    }
+
+    // Valid → clear error, update applied range, fetch data
+    setDateError(null);
+    setAppliedRange({ start: startDate, end: endDate });
+    fetchData(startDate, endDate);
+  };
 
   // ----------------------------
-  // Update chart series when data changes
+  // Update chart series when data fetched
   // ----------------------------
   useEffect(() => {
-    if (typeof window === "undefined") return;
     if (dataChart.length === 0) return;
 
     const maxVal = Math.max(...dataChart) + 1;
 
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       series: [{ ...prev.series[0], data: dataChart }],
       options: {
         ...prev.options,
-        yaxis: { ...prev.options.yaxis, max: maxVal }
-      }
+        yaxis: { ...prev.options.yaxis, max: maxVal },
+      },
     }));
   }, [dataChart]);
 
   return (
-    <div className="h-full w-full col-span-12 rounded-sm border border-stroke bg-white px-5 pb-5 pt-[1.875rem] shadow-de">
-      <div className="flex flex-wrap items-start gap-3">
-        <div className="flex min-w-[11.875rem]">
-          <span className="mr-2 mt-1 flex h-4 w-full max-w-4 items-center justify-center rounded-full border border-secondarychart">
-            <span className="block h-2.5 w-full max-w-2.5 rounded-full bg-secondarychart"></span>
-          </span>
+    <div className="h-full w-full col-span-12 rounded-sm border bg-white px-5 pb-5 pt-[1.875rem] shadow">
 
-          <div className="w-full">
-            <p className="font-semibold text-secondarychart">
-              Total Products Sales
-            </p>
+      {/* Filters Row */}
+      <div className="flex gap-6 mb-4">
 
-            <div className="flex gap-4">
-
-              {/* Start date - FIXED WITH id + htmlFor */}
-              <div className="flex gap-4 items-center">
-                <label className="mr-2 text-sm" htmlFor="chartone-start">
-                  Start
-                </label>
-                <Input
-                  id = "chartone-start"
-                  data-testid = "chartone-start"
-                  className="h-8"
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setStartDate(value);
-
-                    if (new Date(value) > new Date(endDate)) {
-                      setDateError("Start date cannot be after end date");
-                    } else {
-                      setDateError(null);
-                    }
-                  }}
-                />
-                {dateError && (
-                  <p data-testid="date-error" className="text-red-600 text-sm">
-                    {dateError}
-                  </p>
-                )}
-              </div>
-
-              {/* End date - FIXED WITH id + htmlFor */}
-              <div className="flex gap-4 items-center">
-                <label className="mr-2" htmlFor="chartone-end">
-                  End
-                </label>
-                <Input
-                  id = "chartone-end"
-                  data-testid = "chartone-end"
-                  className="h-8"
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setStartDate(value);
-
-                    if (new Date(value) > new Date(endDate)) {
-                      setDateError("Start date cannot be after end date");
-                    } else {
-                      setDateError(null);
-                    }
-                  }}
-                />
-                {dateError && (
-                  <p data-testid="date-error" className="text-red-600 text-sm">
-                    {dateError}
-                  </p>
-                )}
-              </div>
-
-            </div>
-          </div>
+        {/* Start Date */}
+        <div>
+          <label className="text-sm mb-1">Start</label>
+          <Input
+            data-testid="start-date"
+            type="date"
+            value={startDate}
+            onChange={(e) => {
+              const v = e.target.value;
+              setStartDate(v);
+              // setDateError(validateStart(v));
+            }}
+          />
         </div>
+
+        {/* End Date */}
+        <div>
+          <label className="text-sm mb-1">End</label>
+          <Input
+            data-testid="end-date"
+            type="date"
+            value={endDate}
+            onChange={(e) => {
+              const v = e.target.value;
+              setEndDate(v);
+              // setDateError(validateEnd(v));
+            }}
+          />
+        </div>
+
+        {/* Apply Button */}
+        <button
+          data-testid="apply-date-filter-btn"
+          className="self-end px-4 py-2 bg-blue-600 text-white rounded"
+          onClick={onApply}
+        >
+          Apply
+        </button>
       </div>
 
-      <div id="chartOne" className="-ml-5">
-        <ReactApexChart
-          options={state.options}
-          series={state.series}
-          type="area"
-          height={420}
-          width="100%"
-        />
-      </div>
+      {/* Inline Validation Error */}
+      {dateError && (
+        <p className="text-red-600 mb-4" data-testid="date-error">
+          {dateError}
+        </p>
+      )}
+
+      {/* Chart only visible when valid */}
+      {!dateError && (
+        <div id="chartOne" data-testid="analytics-chart">
+          <ReactApexChart
+            options={state.options}
+            series={state.series}
+            type="area"
+            height={420}
+            width="100%"
+          />
+        </div>
+      )}
     </div>
   );
 };

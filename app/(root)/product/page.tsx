@@ -18,7 +18,6 @@ export default function ProductCreationPage() {
     e.preventDefault();
     const form = e.currentTarget;
 
-    // Extract typed form values
     const name = (form.elements.namedItem("name") as HTMLInputElement).value.trim();
     const category = (form.elements.namedItem("category") as HTMLInputElement).value.trim();
     const price = Number((form.elements.namedItem("price") as HTMLInputElement).value);
@@ -27,37 +26,21 @@ export default function ProductCreationPage() {
 
     const newErrors: ProductFormErrors = {};
 
-    // -------------------------
-    // Basic Required Validation
-    // -------------------------
     if (!name) newErrors.name = "Product name is required";
     if (!category) newErrors.category = "Category is required";
     if (!price) newErrors.price = "Price is required";
 
-    // -------------------------
-    // Business Logic Validation
-    // -------------------------
     if (price <= 0) newErrors.price = "Price must be greater than 0";
-
     if (stock < 0) newErrors.stock = "Stock cannot be negative";
-
     if (qty <= 0) newErrors.qty = "Quantity must be at least 1";
-
     if (qty > stock) newErrors.qty = "Quantity cannot exceed available stock";
 
     setErrors(newErrors);
 
-    // If errors exist → stop submission
     if (Object.keys(newErrors).length > 0) return;
 
-    // -------------------------
-    // Simulate a successful submission
-    // -------------------------
     const data = { name, category, price, stock, qty };
     setSubmittedData(data);
-    console.log("Product submitted:", data);
-
-    // Optional: Clear form after submission
     form.reset();
   }
 
@@ -75,7 +58,11 @@ export default function ProductCreationPage() {
             className="border p-2 w-full"
             data-testid="name-input"
           />
-          {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+          {errors.name && (
+            <p data-testid="name-error" className="text-red-500 text-sm">
+              {errors.name}
+            </p>
+          )}
         </div>
 
         {/* Category */}
@@ -86,7 +73,11 @@ export default function ProductCreationPage() {
             className="border p-2 w-full"
             data-testid="category-input"
           />
-          {errors.category && <p className="text-red-500 text-sm">{errors.category}</p>}
+          {errors.category && (
+            <p data-testid="category-error" className="text-red-500 text-sm">
+              {errors.category}
+            </p>
+          )}
         </div>
 
         {/* Price */}
@@ -98,7 +89,11 @@ export default function ProductCreationPage() {
             className="border p-2 w-full"
             data-testid="price-input"
           />
-          {errors.price && <p className="text-red-500 text-sm">{errors.price}</p>}
+          {errors.price && (
+            <p data-testid="price-error" className="text-red-500 text-sm">
+              {errors.price}
+            </p>
+          )}
         </div>
 
         {/* Stock */}
@@ -110,7 +105,11 @@ export default function ProductCreationPage() {
             className="border p-2 w-full"
             data-testid="stock-input"
           />
-          {errors.stock && <p className="text-red-500 text-sm">{errors.stock}</p>}
+          {errors.stock && (
+            <p data-testid="stock-error" className="text-red-500 text-sm">
+              {errors.stock}
+            </p>
+          )}
         </div>
 
         {/* Quantity */}
@@ -122,7 +121,11 @@ export default function ProductCreationPage() {
             className="border p-2 w-full"
             data-testid="qty-input"
           />
-          {errors.qty && <p className="text-red-500 text-sm">{errors.qty}</p>}
+          {errors.qty && (
+            <p data-testid="qty-error" className="text-red-500 text-sm">
+              {errors.qty}
+            </p>
+          )}
         </div>
 
         <button
@@ -135,7 +138,7 @@ export default function ProductCreationPage() {
       </form>
 
       {submittedData && (
-        <div className="mt-4 p-4 border bg-green-50" data-testid="success-box">
+        <div className="mt-4 p-4 border bg-green-50" data-testid="product-json-output">
           <h2 className="font-semibold">Submitted Data:</h2>
           <pre>{JSON.stringify(submittedData, null, 2)}</pre>
         </div>

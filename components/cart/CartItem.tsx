@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 
-export interface CartItemProps {
+interface CartItemProps {
   name: string;
   price: number;
   stock: number;
-  qty: number; // REQUIRED
-  onQtyChange: (newQty: number) => void;
+  qty: number;
+  onQtyChange: (qty: number) => void;
+  index?: number; // needed for test IDs
 }
 
 export default function CartItem({
@@ -16,82 +17,91 @@ export default function CartItem({
   stock,
   qty,
   onQtyChange,
+  index = 0,
 }: CartItemProps) {
   const [error, setError] = useState<string | null>(null);
 
-  function validateQuantity(raw: string): number | null {
+  const subtotal = price * qty;
+
+  function handleIncrement() {
+    if (qty >= stock) {
+      setError("Cannot exceed stock");
+      return;
+    }
     setError(null);
+    onQtyChange(qty + 1);
+  }
 
-    if (!/^\d+$/.test(raw)) {
-      setError("Quantity must be a valid number");
-      return null;
-    }
-
-    const value = Number(raw);
-
-    if (value < 1) {
+  function handleDecrement() {
+    if (qty <= 1) {
       setError("Quantity must be at least 1");
-      return null;
+      return;
     }
-
-    if (value > stock) {
-      setError("Quantity exceeds available stock");
-      return null;
-    }
-
-    return value;
+    setError(null);
+    onQtyChange(qty - 1);
   }
 
-  function handleManualInput(e: React.ChangeEvent<HTMLInputElement>) {
-    const validated = validateQuantity(e.target.value);
-    if (validated !== null) {
-      onQtyChange(validated);
-    }
-  }
+  function handleInput(value: string) {
+    const num = Number(value);
 
-  function increment() {
-    const newQty = qty + 1;
-    if (newQty <= stock) {
-      onQtyChange(newQty);
-    } else {
-      setError("Quantity exceeds available stock");
+    if (isNaN(num)) {
+      setError("Enter a valid number");
+      return;
     }
-  }
 
-  function decrement() {
-    const newQty = qty - 1;
-    if (newQty >= 1) {
-      onQtyChange(newQty);
-    } else {
+    if (num < 1) {
       setError("Quantity must be at least 1");
+      return;
     }
+
+    if (num > stock) {
+      setError("Cannot exceed stock");
+      return;
+    }
+
+    setError(null);
+    onQtyChange(num);
   }
 
   return (
     <div className="border p-4 rounded space-y-2">
       <h3 className="font-semibold">{name}</h3>
-      <p>Price: ₹{price}</p>
-      <p>Available Stock: {stock}</p>
 
       <div className="flex items-center space-x-2">
-        <button onClick={decrement} className="border px-2 py-1">-</button>
+        <button
+          data-testid={`qty-minus-${index}`}
+          onClick={handleDecrement}
+        >
+          -
+        </button>
 
         <input
-          type="text"
-          value={qty.toString()}
-          onChange={handleManualInput}
-          data-testid="qty-input"
-          className="border p-1 w-16 text-center"
+          data-testid={`qty-input-${index}`}
+          className="border px-2 py-1 w-16 text-center"
+          value={qty}
+          onChange={(e) => handleInput(e.target.value)}
         />
 
-        <button onClick={increment} className="border px-2 py-1">+</button>
+        <button
+          data-testid={`qty-plus-${index}`}
+          onClick={handleIncrement}
+        >
+          +
+        </button>
       </div>
 
-      <p data-testid="subtotal">Subtotal: ₹{qty * price}</p>
-
       {error && (
-        <p data-testid="qty-error" className="text-red-500 text-sm">{error}</p>
+        <p
+          className="text-red-500 text-sm"
+          data-testid={`qty-error-${index}`}
+        >
+          {error}
+        </p>
       )}
+
+      <p data-testid={`subtotal-${index}`}>
+        Subtotal: ₹{subtotal}
+      </p>
     </div>
   );
 }
