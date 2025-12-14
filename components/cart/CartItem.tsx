@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-interface CartItemProps {
+interface CartItemProps { //defining data that parent component should supply
   name: string;
   price: number;
   stock: number;
@@ -11,7 +11,7 @@ interface CartItemProps {
   index?: number; // needed for test IDs
 }
 
-export default function CartItem({
+export default function CartItem({ //destructuring the prop
   name,
   price,
   stock,

@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import CouponSection from "@/components/cart/CouponSection";
 import "@testing-library/jest-dom";
 
-describe("CouponSection – Validation & Business Logic", () => {
+describe("CouponSection - Validation & Business Logic", () => {
   const setup = (subtotal = 1000, onApplyDiscount = jest.fn()) => {
     render(
       <CouponSection subtotal={subtotal} onApplyCoupon={onApplyDiscount} />
@@ -121,3 +121,7 @@ describe("CouponSection – Validation & Business Logic", () => {
     expect(onApplyDiscount).toHaveBeenCalledWith(1000); // back to subtotal
   });
 });
+
+
+// onApplyDiscount - component's way of storing what value was return to parent component
+// test captures that instead of duplication state logic

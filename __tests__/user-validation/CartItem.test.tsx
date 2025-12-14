@@ -2,18 +2,18 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import CartItem from "@/components/cart/CartItem";
 import "@testing-library/jest-dom";
 
-describe("CartItem – Quantity Validation & UI Logic", () => {
-  const IDX = 0; // single item index
+describe("CartItem - Quantity Validation & UI Logic", () => {
+  const IDX = 0; //fixed index value since test renders only one item
 
   function setup(initialQty = 1) {
-    let currentQty = initialQty;
+    let currentQty = initialQty; //fake parent state (since onqtychange defined as a controlled component in implementation)
 
     const mockOnQtyChange = jest.fn((newQty: number) => {
       currentQty = newQty;
       rerenderComponent();
     });
 
-    let rerenderComponent = () => {};
+    let rerenderComponent = () => {}; //placeholder function 
 
     function renderComponent() {
       const utils = render(
@@ -119,3 +119,21 @@ describe("CartItem – Quantity Validation & UI Logic", () => {
     expect(screen.getByTestId(`qty-input-${IDX}`)).toHaveValue("1");
   });
 });
+
+//currently - parent logic has been faked manually
+// more efficient approach - using a wrapper approach:
+// function CartItemWrapper({ initialQty = 1 }) {
+//   const [qty, setQty] = useState(initialQty);
+
+//   return (
+//     <CartItem
+//       name="Laptop"
+//       price={1000}
+//       stock={5}
+//       qty={qty}
+//       onQtyChange={setQty}
+//       index={0}
+//     />
+//   );
+// }
+// - involves maintaining a temporary parent component that owns the state (qty) and passes it down to the component being tested

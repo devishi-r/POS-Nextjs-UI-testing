@@ -44,9 +44,7 @@ describe("Product Creation Form - Validation Tests", () => {
     render(<ProductCreationPage />);
   });
 
-  // -------------------------------------------
   // Required Fields
-  // -------------------------------------------
   test("shows required field errors when form is submitted empty", () => {
     submitForm();
 
@@ -55,10 +53,8 @@ describe("Product Creation Form - Validation Tests", () => {
     expect(screen.getByText(/Price must be greater than 0/i)).toBeInTheDocument();
   });
 
-  // -------------------------------------------
   // Price Validation
-  // -------------------------------------------
-  test("shows error when price is zero or negative", () => {
+  test("shows error when price is negative", () => {
     fillForm({
       name: "Item",
       category: "Snacks",
@@ -74,9 +70,7 @@ describe("Product Creation Form - Validation Tests", () => {
     ).toBeInTheDocument();
   });
 
-  // -------------------------------------------
   // Stock Validation
-  // -------------------------------------------
   test("shows error when stock is negative", () => {
     fillForm({
       name: "Item",
@@ -93,9 +87,7 @@ describe("Product Creation Form - Validation Tests", () => {
     ).toBeInTheDocument();
   });
 
-  // -------------------------------------------
   // Quantity Validation
-  // -------------------------------------------
   test("shows error when quantity is less than 1", () => {
     fillForm({
       name: "Item",
@@ -128,9 +120,7 @@ describe("Product Creation Form - Validation Tests", () => {
     ).toBeInTheDocument();
   });
 
-  // -------------------------------------------
   // Successful Submission
-  // -------------------------------------------
   test("submits successfully when all values are valid", () => {
     fillForm({
       name: "Laptop",
@@ -153,3 +143,5 @@ describe("Product Creation Form - Validation Tests", () => {
     expect(screen.getByText(/2/i)).toBeInTheDocument();
   });
 });
+
+//scope - current validation done by checking appearance of text - not foolproof - check with component id (ensure application implement throws error in clearly defined components)

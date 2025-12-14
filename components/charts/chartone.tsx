@@ -51,9 +51,9 @@ const ChartOne: React.FC = () => {
     const categories = generateDateRange(appliedRange.start, appliedRange.end);
 
     setState((prev) => ({
-      ...prev,
-      options: {
-        ...prev.options,
+      ...prev, //copy entire previous state
+      options: { //replace options by only editing xaxis options values (overwrite existing categories) + copy remaining options as it
+        ...prev.options, 
         xaxis: { ...prev.options.xaxis, categories },
       },
     }));
@@ -98,13 +98,12 @@ const ChartOne: React.FC = () => {
       return;
     }
 
-    // Valid → clear error, update applied range, fetch data
     setDateError(null);
     setAppliedRange({ start: startDate, end: endDate });
     fetchData(startDate, endDate);
   };
 
-  // Update chart series when data fetched
+  // Update chart series when data fetched (y-axis values)
   useEffect(() => {
     if (dataChart.length === 0) return;
 

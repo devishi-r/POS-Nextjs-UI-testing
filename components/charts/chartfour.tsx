@@ -39,9 +39,7 @@ const ChartFour: React.FC = () => {
     options: initialChartfourOptions,
   });
 
-  // ----------------------------
   // Generate date labels
-  // ----------------------------
   const generateDateRange = (start: string, end: string) => {
     const s = new Date(start);
     const e = new Date(end);
@@ -76,9 +74,7 @@ const ChartFour: React.FC = () => {
     }));
   }, [appliedRange]);
 
-  // ----------------------------
   // Fetch API (Apply only)
-  // ----------------------------
   const fetchData = async (s: string, e: string) => {
     try {
       const res = await axios.get(`/api/profit?start=${s}&end=${e}`);
@@ -95,9 +91,7 @@ const ChartFour: React.FC = () => {
     }
   };
 
-  // ----------------------------
   // Apply Button (single authority)
-  // ----------------------------
   const onApply = () => {
     const today = new Date();
 
@@ -116,15 +110,12 @@ const ChartFour: React.FC = () => {
       return;
     }
 
-    // VALID
     setDateError(null);
     setAppliedRange({ start: startDate, end: endDate });
     fetchData(startDate, endDate);
   };
 
-  // ----------------------------
   // Update chart series
-  // ----------------------------
   useEffect(() => {
     if (!dataChart.gross.length) return;
 
