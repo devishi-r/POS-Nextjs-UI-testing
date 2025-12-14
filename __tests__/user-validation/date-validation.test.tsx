@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
 import ChartFour from "@/components/charts/chartfour";
 import "@testing-library/jest-dom";
 
@@ -14,22 +14,27 @@ describe("ChartFour Date Validation", () => {
     await act(async () => render(<ChartFour />));
 
     // initialising default start dates
-    expect(screen.getByTestId("chartfour-start")).toHaveValue("2024-05-01");
-    expect(screen.getByTestId("chartfour-end")).toHaveValue("2024-05-01");
+    expect(screen.getByTestId("start-date")).toHaveValue("2024-05-01");
+    expect(screen.getByTestId("end-date")).toHaveValue("2024-05-15");
   });
 
   test("shows error when start > end", async () => {
     await act(async () => render(<ChartFour />));
 
-    const startInput = screen.getByTestId("chartfour-start");
-    const endInput   = screen.getByTestId("chartfour-end");
+    const startInput = screen.getByTestId("start-date");
+    const endInput   = screen.getByTestId("end-date");
 
     await act(async () => {
       fireEvent.change(startInput, { target: { value: "2024-06-10" } });
       fireEvent.change(endInput,   { target: { value: "2024-06-01" } });
     });
 
-    expect(screen.getAllByTestId("date-error").length).toBeGreaterThan(0);
+    fireEvent.click(screen.getByTestId("apply-date-filter-btn"));
+    
+    await waitFor(() => {
+      expect(screen.getByTestId("date-error")).toBeInTheDocument();
+    });
+
   });
 
 });

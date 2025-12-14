@@ -150,8 +150,9 @@ const ChartFour: React.FC = () => {
       {/* Filters */}
       <div className="flex gap-6 mb-4">
         <div>
-          <label className="text-sm mb-1">Start</label>
+          <label className="text-sm mb-1" htmlFor="start-date">Start</label>
           <Input
+          id="start-date"
             data-testid="start-date"
             type="date"
             value={startDate}
@@ -160,8 +161,9 @@ const ChartFour: React.FC = () => {
         </div>
 
         <div>
-          <label className="text-sm mb-1">End</label>
+          <label className="text-sm mb-1" htmlFor="end-date">End</label>
           <Input
+            id="end-date"
             data-testid="end-date"
             type="date"
             value={endDate}

@@ -3,6 +3,8 @@ import CartItem from "@/components/cart/CartItem";
 import "@testing-library/jest-dom";
 
 describe("CartItem – Quantity Validation & UI Logic", () => {
+  const IDX = 0; // single item index
+
   function setup(initialQty = 1) {
     let currentQty = initialQty;
 
@@ -23,6 +25,7 @@ describe("CartItem – Quantity Validation & UI Logic", () => {
           onQtyChange={mockOnQtyChange}
         />
       );
+
       rerenderComponent = () =>
         utils.rerender(
           <CartItem
@@ -42,15 +45,15 @@ describe("CartItem – Quantity Validation & UI Logic", () => {
   test("renders initial qty = 1 and correct subtotal", () => {
     setup();
 
-    expect(screen.getByTestId("qty-input")).toHaveValue("1");
-    expect(screen.getByTestId("subtotal")).toHaveTextContent("1000");
+    expect(screen.getByTestId(`qty-input-${IDX}`)).toHaveValue("1");
+    expect(screen.getByTestId(`subtotal-${IDX}`)).toHaveTextContent("1000");
   });
 
   test("increment button increases quantity until stock limit", () => {
     const { mockOnQtyChange } = setup(1);
 
     for (const expected of [2, 3, 4]) {
-      fireEvent.click(screen.getByText("+"));
+      fireEvent.click(screen.getByTestId(`qty-plus-${IDX}`));
       expect(mockOnQtyChange).toHaveBeenCalledWith(expected);
     }
   });
@@ -58,9 +61,9 @@ describe("CartItem – Quantity Validation & UI Logic", () => {
   test("increment beyond stock shows error and does not update qty", () => {
     const { mockOnQtyChange } = setup(5);
 
-    fireEvent.click(screen.getByText("+"));
+    fireEvent.click(screen.getByTestId(`qty-plus-${IDX}`));
 
-    expect(screen.getByTestId("qty-error")).toHaveTextContent(/exceeds/i);
+    expect(screen.getByTestId(`qty-error-${IDX}`)).toHaveTextContent(/exceed/i);
     expect(mockOnQtyChange).not.toHaveBeenCalled();
   });
 
@@ -68,7 +71,7 @@ describe("CartItem – Quantity Validation & UI Logic", () => {
     const { mockOnQtyChange } = setup(3);
 
     for (const expected of [2, 1]) {
-      fireEvent.click(screen.getByText("-"));
+      fireEvent.click(screen.getByTestId(`qty-minus-${IDX}`));
       expect(mockOnQtyChange).toHaveBeenCalledWith(expected);
     }
   });
@@ -76,43 +79,43 @@ describe("CartItem – Quantity Validation & UI Logic", () => {
   test("decrementing below 1 shows error and prevents update", () => {
     const { mockOnQtyChange } = setup(1);
 
-    fireEvent.click(screen.getByText("-"));
+    fireEvent.click(screen.getByTestId(`qty-minus-${IDX}`));
 
-    expect(screen.getByTestId("qty-error")).toHaveTextContent(/at least 1/i);
+    expect(screen.getByTestId(`qty-error-${IDX}`)).toHaveTextContent(/at least 1/i);
     expect(mockOnQtyChange).not.toHaveBeenCalled();
   });
 
   test("manual input updates qty correctly when valid", () => {
     const { mockOnQtyChange } = setup(1);
 
-    fireEvent.change(screen.getByTestId("qty-input"), {
+    fireEvent.change(screen.getByTestId(`qty-input-${IDX}`), {
       target: { value: "3" },
     });
 
     expect(mockOnQtyChange).toHaveBeenCalledWith(3);
-    expect(screen.getByTestId("subtotal")).toHaveTextContent("3000");
+    expect(screen.getByTestId(`subtotal-${IDX}`)).toHaveTextContent("3000");
   });
 
   test("manual input beyond stock shows error and prevents update", () => {
     const { mockOnQtyChange } = setup(1);
 
-    fireEvent.change(screen.getByTestId("qty-input"), {
+    fireEvent.change(screen.getByTestId(`qty-input-${IDX}`), {
       target: { value: "10" },
     });
 
-    expect(screen.getByTestId("qty-error")).toHaveTextContent(/exceeds/i);
+    expect(screen.getByTestId(`qty-error-${IDX}`)).toHaveTextContent(/exceed/i);
     expect(mockOnQtyChange).not.toHaveBeenCalled();
   });
 
   test("non-numeric input shows validation error", () => {
     const { mockOnQtyChange } = setup(1);
 
-    fireEvent.change(screen.getByTestId("qty-input"), {
+    fireEvent.change(screen.getByTestId(`qty-input-${IDX}`), {
       target: { value: "abc" },
     });
 
-    expect(screen.getByTestId("qty-error")).toHaveTextContent(/valid number/i);
+    expect(screen.getByTestId(`qty-error-${IDX}`)).toHaveTextContent(/valid number/i);
     expect(mockOnQtyChange).not.toHaveBeenCalled();
-    expect(screen.getByTestId("qty-input")).toHaveValue("1");
+    expect(screen.getByTestId(`qty-input-${IDX}`)).toHaveValue("1");
   });
 });

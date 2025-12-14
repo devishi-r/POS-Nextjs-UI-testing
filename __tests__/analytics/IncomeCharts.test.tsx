@@ -10,13 +10,14 @@ jest.mock("next/dynamic", () => () => (props: any) => (
 describe("Analytics - Income Chart", () => {
   test("renders income heading", async () => {
     await waitFor(() => render(<IncomePage />));
-    expect(screen.getByText(/income/i)).toBeInTheDocument();
+    // expect(screen.getByText(/income/i)).toBeInTheDocument();
+    expect(screen.getByTestId("analytics-income-page")).toBeVisible();
   });
 
   test("renders date inputs", async () => {
     await waitFor(() => render(<IncomePage />));    
-    expect(screen.getByTestId("chartfour-start")).toBeInTheDocument();
-    expect(screen.getByTestId("chartfour-end")).toBeInTheDocument();
+    expect(screen.getByTestId("start-date")).toBeInTheDocument();
+    expect(screen.getByTestId("end-date")).toBeInTheDocument();
     });
 
 

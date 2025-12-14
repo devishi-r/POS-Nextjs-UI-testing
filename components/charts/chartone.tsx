@@ -6,11 +6,11 @@ import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { initialChartoneOptions } from "@/lib/charts";
 
-const ReactApexChart = dynamic(() => import("react-apexcharts"), {
-  ssr: false,
+const ReactApexChart = dynamic(() => import("react-apexcharts"), { //a client-only, lazy-loaded React component that appears after hydration.
+  ssr: false, //disabling server side rendering since apexhcarts uses uses browser apis not supported by nextjs ssr
 });
 
-interface ChartOneState {
+interface ChartOneState { //defining shape of data apexcharts expects - (actual data to be plotted, configutation attributes(axes, labels, etc))
   series: { name: string; data: number[] }[];
   options: ApexOptions;
 }
@@ -18,7 +18,7 @@ interface ChartOneState {
 const ChartOne: React.FC = () => {
   const [dataChart, setDataChart] = useState<number[]>([]);
   const [startDate, setStartDate] = useState("2024-05-01");
-  const [endDate, setEndDate] = useState("2024-05-15");
+  const [endDate, setEndDate] = useState("2024-05-15"); 
   const [dateError, setDateError] = useState<string | null>(null);
   const [appliedRange, setAppliedRange] = useState({ start: startDate, end: endDate });
 
@@ -27,9 +27,7 @@ const ChartOne: React.FC = () => {
     options: initialChartoneOptions,
   });
 
-  // ----------------------------
   // Generate date range buckets
-  // ----------------------------
   const generateDateRange = (start: string, end: string) => {
     const s = new Date(start);
     const e = new Date(end);
@@ -59,11 +57,9 @@ const ChartOne: React.FC = () => {
         xaxis: { ...prev.options.xaxis, categories },
       },
     }));
-  }, [appliedRange]);
+  }, [appliedRange]); //runs only when applied date range changes
 
-  // ----------------------------
   // Validation Helpers
-  // ----------------------------
   const validateStart = (value: string) => {
     const today = new Date();
     if (new Date(value) > today) return "Start date cannot be in the future";
@@ -80,9 +76,7 @@ const ChartOne: React.FC = () => {
     return null;
   };
 
-  // ----------------------------
   // Fetch API ONLY when Apply clicked
-  // ----------------------------
   const fetchData = async (s: string, e: string) => {
     try {
       const res = await axios.get(`/api/productsale?start=${s}&end=${e}`);
@@ -94,9 +88,7 @@ const ChartOne: React.FC = () => {
     }
   };
 
-  // ----------------------------
   // Apply Button Handler
-  // ----------------------------
   const onApply = () => {
     const err1 = validateStart(startDate);
     const err2 = validateEnd(endDate);
@@ -112,9 +104,7 @@ const ChartOne: React.FC = () => {
     fetchData(startDate, endDate);
   };
 
-  // ----------------------------
   // Update chart series when data fetched
-  // ----------------------------
   useEffect(() => {
     if (dataChart.length === 0) return;
 
@@ -138,8 +128,9 @@ const ChartOne: React.FC = () => {
 
         {/* Start Date */}
         <div>
-          <label className="text-sm mb-1">Start</label>
+          <label className="text-sm mb-1" htmlFor="start-date">Start</label>
           <Input
+          id = "start-date"
             data-testid="start-date"
             type="date"
             value={startDate}
@@ -153,8 +144,9 @@ const ChartOne: React.FC = () => {
 
         {/* End Date */}
         <div>
-          <label className="text-sm mb-1">End</label>
+          <label className="text-sm mb-1" htmlFor="end-date">End</label>
           <Input
+            id = "end-date"
             data-testid="end-date"
             type="date"
             value={endDate}

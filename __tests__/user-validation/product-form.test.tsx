@@ -143,7 +143,7 @@ describe("Product Creation Form - Validation Tests", () => {
     submitForm();
 
     // Success box should appear
-    expect(screen.getByTestId("success-box")).toBeInTheDocument();
+    expect(screen.getByTestId("product-json-output")).toBeInTheDocument();
 
     // Submitted data should include correct values
     expect(screen.getByText(/Laptop/i)).toBeInTheDocument();
