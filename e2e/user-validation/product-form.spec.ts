@@ -6,9 +6,7 @@ test.describe("Product Form – E2E", () => {
     await page.goto("/product");
   });
 
-  // -----------------------------
-  // 1. EMPTY FORM VALIDATION
-  // -----------------------------
+  // empty form validation
   test("shows validation errors for empty form", async ({ page }) => {
     await page.getByTestId("submit-btn").click();
 
@@ -16,16 +14,13 @@ test.describe("Product Form – E2E", () => {
     await expect(page.getByTestId("category-error")).toBeVisible();
     await expect(page.getByTestId("price-error")).toBeVisible();
 
-    // ❌ No stock-error should appear because empty stock is allowed 
+    //No stock-error since empty stock is allowed 
     await expect(page.getByTestId("stock-error")).not.toBeVisible();
 
-    // ❌ qty-error also does not show because qty default is empty, becomes "Quantity must be at least 1"
+    // qty-error also does not show because qty default is empty, becomes "Quantity must be at least 1"
     await expect(page.getByTestId("qty-error")).toBeVisible();
   });
 
-  // -----------------------------
-  // 2. NUMERIC BUSINESS VALIDATION
-  // -----------------------------
   test("shows numeric validation errors", async ({ page }) => {
     await page.getByTestId("name-input").fill("Laptop");
     await page.getByTestId("category-input").fill("Electronics");
@@ -35,14 +30,10 @@ test.describe("Product Form – E2E", () => {
 
     await page.getByTestId("submit-btn").click();
 
-    // Match EXACT messages from component
     await expect(page.getByTestId("price-error")).toContainText("greater than 0");
     await expect(page.getByTestId("stock-error")).toContainText("cannot be negative");
   });
 
-  // -----------------------------
-  // 3. SUCCESSFUL SUBMISSION
-  // -----------------------------
   test("successful product submission displays JSON output", async ({ page }) => {
     await page.getByTestId("name-input").fill("Laptop");
     await page.getByTestId("category-input").fill("Electronics");

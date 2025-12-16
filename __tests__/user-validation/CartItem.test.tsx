@@ -2,6 +2,8 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import CartItem from "@/components/cart/CartItem";
 import "@testing-library/jest-dom";
 
+// uses a mock callback and rerender mechanism to simulate how a parent would manage state udpates
+
 describe("CartItem - Quantity Validation & UI Logic", () => {
   const IDX = 0; //fixed index value since test renders only one item
 

@@ -13,7 +13,7 @@ export default function CartPage() {
   // Instead of coupon object, store DISCOUNT amount only
   const [discountAmount, setDiscountAmount] = useState(0);
 
-  const subtotal = useMemo(() => {
+  const subtotal = useMemo(() => { //useMemo() - allows caching of calculated results between re-renders
     return cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
   }, [cartItems]);
 

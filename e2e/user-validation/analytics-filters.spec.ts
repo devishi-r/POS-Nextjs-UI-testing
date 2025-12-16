@@ -19,10 +19,10 @@ for (const route of ROUTES) {
       await page.getByTestId("end-date").fill("2025-01-01");
       await page.getByTestId("apply-date-filter-btn").click();
 
-      // ✅ App stays on same page
+      // app remains on same page
       await expect(page).toHaveURL(route);
 
-      // ✅ Page remains stable (no crash)
+      // page intact
       await expect(page.locator("body")).toBeVisible();
     });
 
@@ -33,10 +33,10 @@ for (const route of ROUTES) {
       await page.getByTestId("end-date").fill(future);
       await page.getByTestId("apply-date-filter-btn").click();
 
-      // ✅ No navigation
+      // no navigation
       await expect(page).toHaveURL(route);
 
-      // ✅ Page shell still intact
+      // page intact
       await expect(page.locator("body")).toBeVisible();
     });
 
@@ -45,7 +45,7 @@ for (const route of ROUTES) {
       await page.getByTestId("end-date").fill("2024-05-10");
       await page.getByTestId("apply-date-filter-btn").click();
 
-      // ✅ Only here we assert chart existence
+      // checking chart existence
       await expect(page.getByTestId("analytics-chart")).toBeVisible();
     });
   });

@@ -3,7 +3,7 @@ import ProductCreationPage from "@/app/(root)/product/page";
 import "@testing-library/jest-dom";
 
 describe("Product Creation Form - Validation Tests", () => {
-  function fillForm({
+  function fillForm({ //simulates user input
     name = "",
     category = "",
     price = "",
@@ -46,6 +46,7 @@ describe("Product Creation Form - Validation Tests", () => {
 
   // Required Fields
   test("shows required field errors when form is submitted empty", () => {
+    fillForm({});
     submitForm();
 
     expect(screen.getByText(/Product name is required/i)).toBeInTheDocument();
